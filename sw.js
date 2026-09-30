@@ -1,0 +1,6 @@
+// Everything cached here is public app code or bundled fonts, never personal data.
+const CACHE='inknote-v1';
+const FILES=['./','./index.html','./style.css','./app.js','./render.js','./storage.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./notosanstc.woff2','./notoseriftc.woff2','./lxgwwenkaitc.woff2','./FONTS.md'];
+self.addEventListener('install',event=>event.waitUntil((async()=>{const cache=await caches.open(CACHE);await cache.addAll(FILES);await cache.put(new URL('./offline-ready',self.registration.scope),new Response('ready'));await self.skipWaiting();})()));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{for(const name of await caches.keys())if(name.startsWith('inknote-')&&name!==CACHE)await caches.delete(name);await self.clients.claim();})()));
+self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET'||new URL(req.url).origin!==location.origin)return;event.respondWith((async()=>{const cache=await caches.open(CACHE);const cached=await cache.match(req);if(cached)return cached;try{return await fetch(req);}catch(e){if(req.mode==='navigate')return (await cache.match(new URL('./index.html',self.registration.scope)))||Response.error();return Response.error();}})());});

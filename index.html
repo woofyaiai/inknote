@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101311"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="字在">
+<meta name="description" content="字在，讓文字成為你的限動貼紙。離線編輯，字體與草稿留在裝置。">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<title>字在 · 文字貼紙</title><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon-192.png"><link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header class="app-header"><a class="brand" href="./" aria-label="字在首頁"><span class="brand-mark">字</span><span>字在<span class="brand-en">INKNOTE</span></span></a><button id="settings-open" class="icon-button" aria-label="開啟資料與設定">•••</button></header>
+<main class="workspace">
+<section class="stage-column" aria-label="文字輸入與預覽">
+<div class="section-heading"><h1>讓這句話，有自己的樣子。</h1><span class="small-label">文字貼紙</span></div>
+<div class="text-entry"><label for="text" class="sr-only">輸入文字</label><textarea id="text" rows="3" placeholder="今天，想寫下什麼？" maxlength="2500" spellcheck="false"></textarea><div class="entry-footer"><span id="save-state">草稿只存在這台裝置</span><button id="new-text" class="text-button">新增文字</button></div></div>
+<div class="preview-heading"><span>即時預覽</span><div class="preview-modes" aria-label="預覽背景"><button data-stage="grid" class="active" aria-label="棋盤背景">▦</button><button data-stage="light" aria-label="淺色背景">○</button><button data-stage="dark" aria-label="深色背景">●</button></div></div>
+<div id="preview-stage" class="preview-stage"><div id="empty-preview"><span>字</span><p>寫一句話，從這裡開始。</p></div><canvas id="preview" aria-label="設計好的文字貼紙" hidden></canvas></div>
+<div class="preview-meta"><span id="dimensions">透明背景 · PNG 圖片</span><span>預覽底紋不會輸出</span></div>
+<p id="render-warning" class="warning" role="status" hidden></p>
+</section>
+<section class="editor-column" aria-label="樣式編輯">
+<nav class="tabs" aria-label="編輯分類"><button class="active" data-tab="styles" aria-selected="true">風格</button><button data-tab="fonts" aria-selected="false">字體</button><button data-tab="layout" aria-selected="false">排版</button><button data-tab="color" aria-selected="false">顏色</button><button data-tab="effects" aria-selected="false">效果</button></nav>
+<div id="panel-styles" class="panel"><div class="panel-heading"><h2>一點，就有風格</h2><span>還能繼續微調</span></div><div id="presets" class="preset-grid"></div><div class="panel-heading favorites-heading"><h2>我的收藏</h2><button id="save-style" class="text-button">＋ 收藏目前風格</button></div><div id="favorites"></div></div>
+<div id="panel-fonts" class="panel" hidden><div class="panel-heading"><h2>挑一種語氣</h2><button id="import-font" class="text-button">＋ 匯入字體</button></div><p class="panel-note">中英文都可使用。匯入的字體只保存在這台裝置。</p><div id="font-list"></div><p class="panel-note">支援 .ttf、.otf，每個檔案最多 20 MB，總共最多 80 MB。emoji 保留系統彩色外觀。</p><input id="font-file" type="file" accept=".ttf,.otf" hidden></div>
+<div id="panel-layout" class="panel" hidden><div class="panel-heading"><h2>留一點呼吸</h2><span>整組文字一起調整</span></div><div class="control"><span>對齊</span><div class="segmented" id="alignment"><button data-align="left">靠左</button><button data-align="center" class="active">置中</button><button data-align="right">靠右</button></div></div><div id="layout-controls"></div></div>
+<div id="panel-color" class="panel" hidden><div class="panel-heading"><h2>今天的顏色</h2></div><label class="color-row">文字顏色<input id="color" type="color" value="#181c19"></label><div id="swatches" class="swatches"></div><label class="toggle-row">加上底色<input id="background" type="checkbox" role="switch"></label><div id="background-controls"><label class="color-row">底色<input id="bgColor" type="color" value="#d8ef9a"></label><div id="bg-sliders"></div></div></div>
+<div id="panel-effects" class="panel" hidden><div class="panel-heading"><h2>加一點個性</h2></div><label class="toggle-row">文字外框<input id="outline" type="checkbox" role="switch"></label><div id="outline-controls"><label class="color-row">外框顏色<input id="outlineColor" type="color" value="#ffffff"></label><div id="outline-sliders"></div></div><label class="toggle-row">陰影<input id="shadow" type="checkbox" role="switch"></label><div id="shadow-controls"><label class="color-row">陰影顏色<input id="shadowColor" type="color" value="#000000"></label><div id="shadow-sliders"></div></div></div>
+</section>
+</main>
+<footer class="export-bar"><div class="offline-summary"><span id="offline-status">正在準備離線使用…</span><button id="retry-offline" class="text-button" hidden>重新準備</button></div><div class="export-actions"><button id="save-image" class="secondary-button" disabled>儲存圖片</button><button id="copy-image" class="primary-button" disabled>複製貼紙 <span>↗</span></button></div></footer>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<dialog id="settings-dialog"><div class="dialog-heading"><h2>資料與使用</h2><button class="icon-button close-dialog" aria-label="關閉">×</button></div><p>字體、草稿和收藏只存在目前裝置。清除網站資料後可能遺失，記得偶爾備份。</p><button id="backup" class="wide-button">匯出完整備份</button><button id="restore" class="wide-button">從備份還原</button><input id="restore-file" type="file" accept=".json,application/json" hidden><details><summary>怎麼貼到 IG？</summary><ol><li>先在 IG 限時動態準備照片或影片。</li><li>回到這裡完成文字，按「複製貼紙」。</li><li>回到 IG，使用貼上提示或文字輸入處的貼上功能。</li><li>如果 IG 沒有出現貼紙，改用「儲存圖片」，再從 IG 的照片貼紙加入。</li></ol><p>不同 IG 版本的入口可能不同，透明貼上仍需實機確認。</p></details><details><summary>加入主畫面與離線使用</summary><p>在 Safari 開啟本站，等下方顯示「離線已準備好」，再從分享選單加入主畫面。之後可離線編輯，更新與發布 IG 則需連網。</p></details><details><summary>資料隱私</summary><p>不傳送你輸入的文字、匯入的字體或備份檔，也沒有追蹤分析。網站提供者可能記錄一般連線資訊。備份檔含個人內容，請保存在自己的空間。</p></details><p class="version">字在 0.1.0 · <a href="./FONTS.md">字體來源與授權</a></p></dialog>
+<dialog id="message-dialog"><form method="dialog"><h2 id="message-title"></h2><p id="message-body"></p><label id="message-input-label" hidden>名稱<input id="message-input" maxlength="40" autocomplete="off"></label><div class="dialog-actions"><button value="cancel" class="secondary-button">取消</button><button value="ok" class="primary-button">確認</button></div></form></dialog>
+<dialog id="export-dialog"><div class="dialog-heading"><h2>儲存圖片</h2><button class="icon-button close-dialog" aria-label="關閉">×</button></div><div class="export-preview"><img id="export-image" alt="準備儲存的文字貼紙"></div><p>開啟分享選單後選「儲存影像」，或下載 PNG。也可以長按圖片查看儲存選項。</p><button id="share-file" class="primary-button wide-button">開啟分享選單</button><a id="download-image" class="secondary-button wide-button" download="inknote.png">下載 PNG</a></dialog>
+<script type="module" src="./app.js"></script>
+</body></html>
